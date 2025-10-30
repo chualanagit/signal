@@ -320,14 +320,21 @@ gcloud config set project YOUR_PROJECT_ID
 # 3. Enable APIs
 gcloud services enable cloudbuild.googleapis.com run.googleapis.com
 
-# 4. Deploy (from signal-finder-py directory)
+# 4. Create Artifact Registry (if not exists)
+gcloud artifacts repositories create docker-repo \
+  --repository-format=docker \
+  --location=us-central1 \
+  --description="Docker repository"
+
+# 5. Deploy from repository root (IMPORTANT: use signal-finder-py subdirectory)
+cd /Users/alanchu/signal
 gcloud run deploy intent-finder \
-  --source . \
+  --source signal-finder-py \
   --region us-central1 \
   --allow-unauthenticated \
   --set-env-vars OPENAI_API_KEY=your-key,GOOGLE_CSE_KEY=your-key
 
-# 5. Get URL
+# 6. Get URL
 gcloud run services describe intent-finder --region us-central1 --format 'value(status.url)'
 ```
 
