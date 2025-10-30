@@ -52,6 +52,11 @@ def root_page():
     path = os.path.join(os.path.dirname(__file__), "static", "index.html")
     return FileResponse(path)
 
+@app.get("/health")
+def health_check():
+    """Health check endpoint for deployment platforms"""
+    return {"status": "healthy", "service": "Intent Finder API"}
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"], allow_credentials=True,
