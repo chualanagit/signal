@@ -1,0 +1,755 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>Intent Finder</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+        :root {
+            --bg: #fafbfc;
+            --fg: #1a1a2e;
+            --muted: #6b7280;
+            --border: #e5e7eb;
+            --brand: #2563eb;
+            --brand-hover: #1d4ed8;
+            --success: #10b981;
+            --card-bg: #ffffff;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            background: var(--bg);
+            color: var(--fg);
+            font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+        }
+
+        .wrap {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 32px 24px;
+        }
+
+        h1 {
+            font-size: 36px;
+            font-weight: 700;
+            margin: 0 0 8px 0;
+            background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            color: var(--muted);
+            font-size: 16px;
+            margin-bottom: 32px;
+        }
+
+        .row {
+            display: grid;
+            gap: 12px;
+            margin: 24px 0;
+            padding: 24px;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border);
+        }
+
+        .step-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--fg);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .step-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            background: var(--brand);
+            color: white;
+            border-radius: 50%;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        input,
+        textarea,
+        button,
+        select {
+            font: inherit;
+        }
+
+        input,
+        textarea {
+            padding: 12px 16px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            transition: all 0.2s ease;
+            background: var(--card-bg);
+            font-size: 15px;
+        }
+
+        input:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--brand);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        button {
+            padding: 12px 20px;
+            border-radius: 12px;
+            border: none;
+            background: var(--brand);
+            color: #fff;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            font-size: 15px;
+        }
+
+        button:hover {
+            background: var(--brand-hover);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button.ghost {
+            background: var(--card-bg);
+            color: var(--fg);
+            border: 2px solid var(--border);
+        }
+
+        button.ghost:hover {
+            background: #f9fafb;
+            border-color: var(--brand);
+        }
+
+        .pill {
+            padding: 10px 18px;
+            border: 2px solid var(--border);
+            border-radius: 999px;
+            background: var(--card-bg);
+            color: var(--fg);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .pill:hover {
+            background: #f0f7ff;
+            border-color: var(--brand);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .pill.active {
+            background: var(--brand);
+            color: #fff;
+            border-color: var(--brand);
+            box-shadow: var(--shadow-md);
+        }
+
+        .card {
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            background: var(--card-bg);
+            transition: all 0.2s ease;
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-md);
+            border-color: #d1d5db;
+        }
+
+        .info-card {
+            background: #f0f9ff;
+            border: 2px solid #bfdbfe;
+            border-radius: 12px;
+            padding: 16px;
+            margin: 12px 0;
+        }
+
+        .info-section {
+            margin-bottom: 16px;
+        }
+
+        .info-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: var(--fg);
+            margin-bottom: 6px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-content {
+            color: var(--muted);
+            line-height: 1.6;
+        }
+
+        .pain-points {
+            margin-top: 8px;
+        }
+
+        .pain-point-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            margin: 6px 0;
+            color: var(--muted);
+        }
+
+        .pain-point-item::before {
+            content: "⚡";
+            font-size: 16px;
+            margin-top: 2px;
+        }
+
+        .tag {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        details {
+            margin: 12px 0;
+            padding: 12px;
+            background: #f9fafb;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--brand);
+            user-select: none;
+        }
+
+        summary:hover {
+            color: var(--brand-hover);
+        }
+
+        .grid {
+            display: grid;
+            gap: 16px;
+        }
+
+        .muted {
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .link {
+            color: var(--brand);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s ease;
+        }
+
+        .link:hover {
+            color: var(--brand-hover);
+            text-decoration: underline;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid #e5e7eb;
+            border-top: 2px solid var(--brand);
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            vertical-align: middle;
+        }
+
+        button .loading {
+            margin-right: 4px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        @media (max-width: 640px) {
+            .wrap {
+                padding: 20px 16px;
+            }
+
+            h1 {
+                font-size: 28px;
+            }
+
+            .row {
+                padding: 16px;
+            }
+
+            .actions {
+                flex-direction: column;
+            }
+
+            button,
+            .pill {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap">
+        <h1>Intent Finder</h1>
+        <div class="subtitle">Find high-intent prospects actively searching for solutions like yours</div>
+
+        <!-- getUserInput -->
+        <div class="row">
+            <div class="step-title">
+                <span class="step-badge">1</span>
+                Enter your app or website
+            </div>
+            <input id="userInput" placeholder="Paste website link OR type an app description…" />
+            <div class="actions">
+                <button onclick="startFlow()">🚀 Start Analysis</button>
+                <button class="ghost" onclick="resetAll()">Reset</button>
+            </div>
+            <div id="descBox" class="muted"></div>
+        </div>
+
+        <!-- Product Summary -->
+        <div id="summaryBox" class="row" style="display:none;">
+            <div class="step-title">
+                <span class="step-badge">2</span>
+                Review product summary
+            </div>
+            <div class="muted">Please verify this summary captures your product accurately:</div>
+            <div class="info-card">
+                <div class="info-section">
+                    <div class="info-label">Product Description</div>
+                    <div id="productSummary" class="info-content"></div>
+                </div>
+                <div class="info-section">
+                    <div class="info-label">Target Customer Segment</div>
+                    <div id="customerSegment" class="info-content"></div>
+                </div>
+                <div class="info-section" id="painPointsSection" style="display:none;">
+                    <div class="info-label">Pain Points It Solves</div>
+                    <div id="painPoints" class="pain-points"></div>
+                </div>
+            </div>
+            <div class="actions">
+                <button onclick="proceedToTopics()">✅ Looks Good - Continue</button>
+                <button class="ghost" onclick="editDescription()">✏️ Edit Description</button>
+            </div>
+        </div>
+
+        <!-- GTM topic options -->
+        <div id="topicsBox" class="row" style="display:none;">
+            <div class="step-title">
+                <span class="step-badge">3</span>
+                Choose a GTM topic
+            </div>
+            <div class="muted">Select the pain point or challenge your product addresses:</div>
+            <div id="topics" class="actions"></div>
+        </div>
+
+        <!-- Keywords + Search -->
+        <div id="keywordsBox" class="row" style="display:none;">
+            <div class="step-title">
+                <span class="step-badge">4</span>
+                Search for relevant posts
+            </div>
+            <div style="margin: 8px 0;"><strong>Selected topic:</strong> <span class="badge badge-success"
+                    id="chosenTopic"></span></div>
+            <details>
+                <summary>View generated search keywords</summary>
+                <ul id="keywordList"></ul>
+            </details>
+            <div class="muted">We'll search LinkedIn, Reddit, and other platforms for people actively seeking solutions:
+            </div>
+            <button onclick="runSearch()">🔍 Search All Platforms</button>
+        </div>
+
+        <!-- ShowTop10Posts -->
+        <div id="resultsBox" class="row" style="display:none;">
+            <div class="step-title">
+                <span class="step-badge">5</span>
+                Review results & generate responses
+            </div>
+            <div class="muted">Found <span id="resultCount" style="font-weight: 600; color: var(--brand);">0</span>
+                posts from potential customers actively seeking solutions.
+                Click "View Post" to see the original discussion, or "Generate Reply" to create a helpful response:
+            </div>
+            <div id="results" class="grid"></div>
+        </div>
+    </div>
+
+    <script>
+        const API = location.origin; // same host/port as backend via uvicorn
+
+        let description = '';
+        let customerSegment = '';
+        let painPoints = [];
+        let topics = [];
+        let topic = '';
+        let queries = [];
+        let posts = [];
+        let drafts = {}; // url -> markdown
+
+        function isUrl(str) { return /^https?:\/\//i.test((str || '').trim()); }
+        function el(id) { return document.getElementById(id); }
+
+        function resetAll() {
+            description = ''; customerSegment = ''; painPoints = []; topics = []; topic = ''; queries = []; posts = []; drafts = {};
+            el('userInput').value = '';
+            el('descBox').textContent = '';
+            el('summaryBox').style.display = 'none';
+            el('topicsBox').style.display = 'none';
+            el('keywordsBox').style.display = 'none';
+            el('resultsBox').style.display = 'none';
+            el('productSummary').textContent = '';
+            el('customerSegment').textContent = '';
+            el('painPoints').innerHTML = '';
+            el('painPointsSection').style.display = 'none';
+            el('topics').innerHTML = '';
+            el('keywordList').innerHTML = '';
+            el('results').innerHTML = '';
+        }
+
+        async function startFlow() {
+            const input = el('userInput').value.trim();
+            if (!input) { alert('Please enter a website URL or an app description.'); return; }
+
+            const btn = event.target;
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading"></span> Analyzing...';
+            el('descBox').innerHTML = '<span class="loading"></span> <span style="color: var(--brand);">Extracting product information and analyzing customer segment...</span>';
+
+            try {
+                // Handle both URLs and manual text input
+                const urlToSend = isUrl(input) ? input : 'manual:' + input;
+                const r = await fetch(API + '/extract', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ url: urlToSend }) });
+                if (!r.ok) {
+                    alert('Extract failed');
+                    return;
+                }
+
+                const data = await r.json();
+                description = data.description || '';
+                customerSegment = data.customer_segment || '';
+                painPoints = data.pain_points || [];
+
+                // Show product summary for user review
+                el('productSummary').textContent = description;
+                el('customerSegment').textContent = customerSegment;
+
+                // Show pain points if available
+                if (painPoints.length > 0) {
+                    const painPointsDiv = el('painPoints');
+                    painPointsDiv.innerHTML = '';
+                    painPoints.forEach(pp => {
+                        const div = document.createElement('div');
+                        div.className = 'pain-point-item';
+                        div.innerHTML = `<span>${pp}</span>`;
+                        painPointsDiv.appendChild(div);
+                    });
+                    el('painPointsSection').style.display = 'block';
+                }
+
+                el('descBox').innerHTML = '<span style="color: var(--success);">✅ Analysis complete!</span>';
+                el('summaryBox').style.display = 'block';
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '🚀 Start Analysis';
+            }
+        }
+
+        async function proceedToTopics() {
+            const btn = event.target;
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading"></span> Generating Topics...';
+
+            try {
+                // llmGenerateGtmTopicForApp
+                const r2 = await fetch(API + '/gtm-topics', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ description }) });
+                if (!r2.ok) { alert('GTM topics failed'); return; }
+                const data2 = await r2.json();
+                topics = data2.topics || [];
+
+                // render topics
+                const box = el('topicsBox'); box.style.display = 'block';
+                const tgt = el('topics'); tgt.innerHTML = '';
+                topics.forEach(t => {
+                    const b = document.createElement('button');
+                    b.className = 'pill';
+                    b.textContent = t;
+                    b.onclick = () => chooseTopic(t, b);
+                    tgt.appendChild(b);
+                });
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '✅ Looks Good - Continue';
+            }
+        }
+
+        function editDescription() {
+            // Allow user to edit the description
+            const newDescription = prompt('Edit the product description:', description);
+            if (newDescription && newDescription.trim()) {
+                description = newDescription.trim();
+                el('productSummary').textContent = description;
+            }
+        }
+
+        async function chooseTopic(t, btn) {
+            topic = t;
+            // highlight
+            document.querySelectorAll('#topics .pill').forEach(x => x.classList.remove('active'));
+            btn.classList.add('active');
+
+            // Show loading in keywords box
+            el('keywordsBox').style.display = 'block';
+            el('chosenTopic').innerHTML = '<span class="loading"></span> Generating keywords...';
+
+            // llmGenerateSearchKeywords
+            const r = await fetch(API + '/keywords', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ topic, description }) });
+            if (!r.ok) { alert('Keywords failed'); return; }
+            const data = await r.json();
+            queries = data.queries || [];
+
+            // render
+            el('chosenTopic').textContent = topic;
+            const ul = el('keywordList'); ul.innerHTML = '';
+            queries.forEach(q => { const li = document.createElement('li'); li.textContent = q; ul.appendChild(li); });
+        }
+
+        async function runSearch() {
+            const btn = event.target;
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading"></span> Searching LinkedIn, Reddit, and more...';
+
+            // Show loading state in results box
+            el('resultsBox').style.display = 'block';
+            el('results').innerHTML = '<div class="card" style="text-align: center; padding: 40px;"><span class="loading" style="width: 40px; height: 40px; border-width: 4px;"></span><div style="margin-top: 16px; color: var(--brand); font-weight: 600;">Searching across platforms...</div><div style="margin-top: 8px; color: var(--muted);">Finding high-intent business buyers</div></div>';
+
+            try {
+                const r = await fetch(API + '/search', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ topic, queries, per_query: 4 }) });
+                if (!r.ok) { alert('Search failed'); return; }
+                const data = await r.json();
+                posts = data.posts || [];
+                renderResults();
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '🔍 Search All Platforms';
+            }
+        }
+
+        function renderResults() {
+            el('resultsBox').style.display = 'block';
+            el('resultCount').textContent = posts.length;
+            const wrap = el('results'); wrap.innerHTML = '';
+            posts.forEach(p => {
+                const card = document.createElement('div'); card.className = 'card';
+                const tag = document.createElement('div'); tag.className = 'tag'; tag.textContent = p.source.toUpperCase();
+                const a = document.createElement('a'); a.href = p.url; a.target = '_blank'; a.rel = 'noreferrer'; a.className = 'link';
+                a.textContent = p.title || p.url;
+                const sn = document.createElement('p'); sn.textContent = p.snippet || '';
+                const act = document.createElement('div'); act.className = 'actions';
+
+                // Add View Post button
+                const viewBtn = document.createElement('button');
+                viewBtn.className = 'ghost';
+                viewBtn.textContent = '🔗 View Post';
+                viewBtn.onclick = () => window.open(p.url, '_blank');
+
+                const replyBtn = document.createElement('button');
+                replyBtn.textContent = '💬 Generate Reply';
+                replyBtn.id = `reply-btn-${p.url}`;
+                replyBtn.onclick = () => genReply(p, card, replyBtn);
+
+                act.appendChild(viewBtn);
+                act.appendChild(replyBtn);
+                card.appendChild(tag); card.appendChild(a); card.appendChild(sn); card.appendChild(act);
+                wrap.appendChild(card);
+            });
+        }
+
+        async function genReply(p, card, button) {
+            // Disable button and show loading state
+            button.disabled = true;
+            const originalText = button.textContent;
+            button.innerHTML = '<span class="loading"></span> Generating...';
+
+            // Create or get reply block
+            let reply = card.querySelector('.reply');
+            if (!reply) {
+                reply = document.createElement('div');
+                reply.className = 'reply';
+                reply.style.marginTop = '12px';
+                reply.style.background = '#f0f9ff';
+                reply.style.border = '2px solid #bfdbfe';
+                reply.style.borderRadius = '12px';
+                reply.style.padding = '16px';
+                reply.style.position = 'relative';
+                card.appendChild(reply);
+            }
+
+            // Show loading state
+            reply.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 8px; color: var(--brand); font-weight: 600; margin-bottom: 12px;">
+                    <span class="loading"></span>
+                    <span>Generating Response...</span>
+                </div>
+                <div id="stream-content-${p.url}" style="white-space: pre-wrap; line-height: 1.6; color: var(--muted); min-height: 20px;">
+                    <span style="opacity: 0.5;">Waiting for response...</span>
+                </div>
+            `;
+
+            const contentDiv = document.getElementById(`stream-content-${p.url}`);
+
+            // Try streaming first
+            try {
+                console.log('Starting streaming request...');
+                const response = await fetch(API + '/reply/stream', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ topic, post: p })
+                });
+
+                console.log('Response status:', response.status);
+
+                if (!response.ok) throw new Error('Streaming failed with status ' + response.status);
+
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                let buffer = '';
+                let fullText = '';
+                let hasStarted = false;
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+
+                    buffer += decoder.decode(value, { stream: true });
+                    const lines = buffer.split('\n');
+                    buffer = lines.pop(); // Keep incomplete line in buffer
+
+                    for (const line of lines) {
+                        if (line.startsWith('data: ')) {
+                            const data = line.slice(6);
+                            console.log('Received chunk:', data.substring(0, 50));
+
+                            if (data === '[DONE]') {
+                                console.log('Stream complete!');
+                                reply.querySelector('div').innerHTML = '<div style="font-weight: 600; color: var(--success); margin-bottom: 8px;">✅ Response Generated</div>';
+                                contentDiv.style.color = 'var(--fg)';
+                                drafts[p.url] = fullText;
+                                button.disabled = false;
+                                button.innerHTML = '✓ Regenerate';
+                                return;
+                            } else if (data.startsWith('[ERROR]')) {
+                                throw new Error(data.slice(8));
+                            } else {
+                                if (!hasStarted) {
+                                    hasStarted = true;
+                                    contentDiv.innerHTML = '';
+                                }
+                                fullText += data;
+                                contentDiv.textContent = fullText;
+                                contentDiv.style.color = 'var(--fg)';
+                            }
+                        }
+                    }
+                }
+            } catch (streamError) {
+                console.error('Streaming failed:', streamError);
+                console.log('Falling back to regular API...');
+
+                // Fallback to non-streaming endpoint
+                reply.querySelector('div').innerHTML = '<div style="font-weight: 600; color: var(--brand); margin-bottom: 8px;"><span class="loading"></span> Generating (fallback)...</div>';
+
+                try {
+                    const r = await fetch(API + '/reply', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ topic, post: p })
+                    });
+                    if (!r.ok) throw new Error('Reply API failed');
+
+                    const data = await r.json();
+                    drafts[p.url] = data.response || '';
+                    reply.querySelector('div').innerHTML = '<div style="font-weight: 600; color: var(--success); margin-bottom: 8px;">✅ Response Generated</div>';
+                    contentDiv.textContent = drafts[p.url];
+                    contentDiv.style.color = 'var(--fg)';
+                } catch (fallbackError) {
+                    console.error('Fallback also failed:', fallbackError);
+                    reply.querySelector('div').innerHTML = '<div style="font-weight: 600; color: #dc2626; margin-bottom: 8px;">❌ Generation Failed</div>';
+                    contentDiv.innerHTML = '<span style="color: #dc2626;">Error: ' + fallbackError.message + '</span>';
+                }
+            } finally {
+                button.disabled = false;
+                if (button.textContent.includes('Generating')) {
+                    button.innerHTML = originalText;
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>
