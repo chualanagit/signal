@@ -61,3 +61,4 @@ echo ""
 echo "📊 View logs: gcloud run services logs tail ${SERVICE_NAME} --region ${REGION}"
 echo "📈 View metrics: https://console.cloud.google.com/run/detail/${REGION}/${SERVICE_NAME}/metrics"
 
+

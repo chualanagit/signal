@@ -8,6 +8,7 @@ steps:
       - '-f'
       - 'signal-finder-py/Dockerfile'
       - 'signal-finder-py'
+    dir: '.'
 
   # Push the container image
   - name: 'gcr.io/cloud-builders/docker'
@@ -25,4 +26,5 @@ substitutions:
   _REGION: us-central1
   _REPO_NAME: docker-repo
   _SERVICE_NAME: intent-finder
+
 
